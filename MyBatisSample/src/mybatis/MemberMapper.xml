@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="mybatis.MemberMapper">
+<!-- 
+* 기본문법 : 
+	<insert delete select update
+		parameterType="dto(원하는 클래스)"
+		resultType="dto">
+		
+			
+			Query #{외부로부터 들어오는 값} - core tag
+		
+	<insert delete select update>
+ -->
+
+
+<insert id="add" parameterType="dto.MemberDto">
+	INSERT INTO MEMBERDTO(ID, PWD, EMAIL)
+	VALUES( #{id}, #{pwd}, #{email} )
+</insert>
+
+
+
+
+<!-- 방법1 : 여러 값이 들어올 때  -->
+<delete id="del" parameterType="dto.MemberDto">
+	DELETE FROM MEMBERDTO
+	WHERE ID=#{id} AND PWD=#{pwd}
+</delete>
+
+<!-- 방법2 : 하나값만 들어올때 -->
+<delete id="remove" parameterType="java.lang.String">
+	DELETE FROM MEMBERDTO
+	WHERE ID=#{str}
+</delete>
+
+
+
+<update id="upd" parameterType="dto.MemberDto">
+	UPDATE MEMBERDTO
+	SET PWD=#{pwd}
+	WHERE ID=#{id}
+</update>
+
+
+
+
+
+
+
+<!-- 가져오는 값이 하나일 때  --> 
+<select id="find" parameterType="java.lang.String"
+	resultType="dto.MemberDto">
+	SELECT *
+	FROM MEMBERDTO
+	WHERE ID=#{id}
+</select>
+
+
+
+<!-- list를 가져올 때 -->
+<select id="allData" resultType="dto.MemberDto">
+	SELECT * 
+	FROM MEMBERDTO
+</select>
+
+
+
+
+
+
+
+
+<!-- Bbs select -->
+<select id="search" parameterType="dto.BbsParam"
+	resultType="dto.BbsDto">
+	SELECT *
+	FROM BBS
+	WHERE 1=1
+	<if test="s_category == 'title'">
+		AND TITLE LIKE '%'||#{keyword}||'%'
+	</if>
+	<if test="s_category == 'content'">
+		AND CONTENT LIKE '%'||#{keyword}||'%'
+	</if>
+</select>
+
+
+
+
+<select id="choice" parameterType="dto.BbsParam"
+	resultType="dto.BbsDto">
+	SELECT *
+	FROM BBS
+	WHERE 1=1
+	<choose>
+		<when test="s_category == 'title'"><!--if -->
+			AND TITLE LIKE '%'||#{keyword}||'%'
+		</when>
+		<otherwise>	<!-- else -->
+			AND CONTENT LIKE '%'||#{keyword}||'%'
+		</otherwise>
+	</choose>
+</select>
+
+
+
+
+
+
+
+<select id="choiceSelect" parameterType="dto.BbsParam"
+	resultType="dto.BbsDto">
+	SELECT *
+	FROM BBS
+	WHERE 1=1
+	<choose>
+		<when test="s_category == 'title'"><!--if -->
+			AND TITLE LIKE '%'||#{keyword}||'%'
+		</when>
+		<when test="s_category == 'content'"><!--if -->
+			AND CONTENT LIKE '%'||#{keyword}||'%'
+		</when>
+				<when test="s_category == 'id'"><!--if -->
+			AND ID LIKE #{keyword}
+		</when>
+	</choose>
+</select>
+
+
+
+
+
+</mapper>
